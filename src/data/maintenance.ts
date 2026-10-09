@@ -1,0 +1,112 @@
+import { MaintenanceService, MaintenanceBooking } from "../types";
+
+export const maintenanceServices: MaintenanceService[] = [
+  {
+    id: "serv-basico",
+    name: "Alistamiento Básico Express",
+    category: "Preventivo",
+    price: 85000,
+    duration: "2 a 3 Horas",
+    image: "/assets/products/img-023.jpg",
+    summary:
+      "Ajuste de seguridad y lubricación esencial para ciclistas frecuentes que buscan rodar seguros sin ruidos extraños.",
+    includes: [
+      "Calibración de cambios delantero y trasero",
+      "Ajuste y alineación de pastillas/calipers de freno",
+      "Torque de seguridad en potencia, manillar y bielas",
+      "Limpieza y lubricación externa de cadena con cera cerámica",
+      "Calibración de presión de aire según peso del ciclista",
+    ],
+  },
+  {
+    id: "serv-general",
+    name: "Mantenimiento General BikeStore Pro",
+    category: "Avanzado",
+    price: 180000,
+    duration: "24 Horas",
+    image: "/assets/products/img-021.jpg",
+    popular: true,
+    summary:
+      "El servicio estrella recomendado cada 3 meses. Desensamble y lavado profundo para devolverle a tu máquina la suavidad del primer día.",
+    includes: [
+      "Lavado ecológico especializado con desengrasante biodegradable",
+      "Desarme, limpieza ultrasónica y reengrase de transmisión",
+      "Alineación milimétrica de rines en centrador digital",
+      "Revisión y engrase de rodamientos de dirección y centro (bottom bracket)",
+      "Regulación de tensión de radios y cables",
+      "Purgado o ajuste de tensión de mandos",
+      "Diagnóstico computarizado de desgaste de cadena y piñonería",
+    ],
+  },
+  {
+    id: "serv-overhaul",
+    name: "Desarme Total Overhaul & Suspensiones",
+    category: "Especializado",
+    price: 320000,
+    duration: "48 Horas",
+    image: "/assets/products/img-016.jpg",
+    summary:
+      "Desmontaje del 100% de la bicicleta hasta el cuadro desnudo. Inspección de fisuras en carbono y mantenimiento hidráulico completo.",
+    includes: [
+      "Desarme completo pieza por pieza e inspección ultrasónica de cuadro",
+      "Mantenimiento básico de suspensión (cambio de retenes y aceite 50h)",
+      "Purgado hidráulico de frenos con líquido mineral / DOT 5.1",
+      "Cambio de fundas, guayas o recableado interno antivibración",
+      "Reemplazo o recarga de líquido sellomático tubeless en ambas ruedas",
+      "Tratamiento protector de cuadro con cera nanocerámica hidrofóbica",
+      "Prueba de ruta y test de rigidez por técnico certificado Shimano/SRAM",
+    ],
+  },
+  {
+    id: "serv-ebike",
+    name: "Service E-Bike & Diagnóstico Electrónico",
+    category: "Especializado",
+    price: 240000,
+    duration: "24 a 36 Horas",
+    image: "/assets/products/img-010.jpg",
+    summary:
+      "Especialistas en motores Bosch, Shimano Steps, Specialized Turbo y transmisiones electrónicas Di2 y AXS.",
+    includes: [
+      "Diagnóstico de salud de batería (SoH) y ciclos de carga",
+      "Actualización de firmware de motor, pantalla y mandos",
+      "Limpieza dieléctrica de conectores y sellos herméticos IPX6",
+      "Ajuste y microcalibración inalámbrica SRAM AXS / Shimano Di2",
+      "Inspección de par de apriete motor y anclajes estructurales",
+    ],
+  },
+];
+
+export const sampleBookings: MaintenanceBooking[] = [
+  {
+    id: "BK-7842",
+    clientName: "David Fernando Arce",
+    email: "david.arce@bikestore.com",
+    phone: "315 489 2031",
+    bikeBrand: "Specialized Stumpjumper Expert",
+    bikeType: "Montaña (MTB)",
+    serviceId: "serv-general",
+    serviceName: "Mantenimiento General BikeStore Pro",
+    date: "2026-10-12",
+    timeSlot: "09:00 AM - 11:00 AM",
+    notes: "Ruido seco al pedalear parado y holgura en buje trasero.",
+    status: "En reparación",
+    technician: "Carlos Ramírez (Certificación Shimano Máster)",
+    costEstimate: 180000,
+  },
+  {
+    id: "BK-6510",
+    clientName: "Freddy Sierra",
+    email: "freddy.sierra@sena.edu.co",
+    phone: "310 994 1284",
+    bikeBrand: "Trek Domane SL 6",
+    bikeType: "Ruta / Carretera",
+    serviceId: "serv-overhaul",
+    serviceName: "Desarme Total Overhaul & Suspensiones",
+    date: "2026-10-10",
+    timeSlot: "02:00 PM - 04:00 PM",
+    notes: "Preparación para el Reto de los Volcanes, cambio de líquido de frenos.",
+    status: "Lista para entrega",
+    technician: "Andrés Moncada (Experto suspensiones FOX/RockShox)",
+    costEstimate: 320000,
+  },
+];
