@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Page, Product, Order, MaintenanceBooking, MaintenanceService } from "./types";
 import { initialProducts } from "./data/products";
 import { maintenanceServices, sampleBookings } from "./data/maintenance";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CartProvider, useCart } from "./context/CartContext";
 
 // Componentes Templates y Organismos
@@ -25,9 +25,11 @@ import AdminDashboardPage from "./pages/AdminDashboardPage";
 function AppContent() {
   const [currentPage, setCurrentPage] = useState<Page>("home");
   const [products, setProducts] = useState<Product[]>(() => {
+    const catalogVersion = localStorage.getItem("bikestore_catalog_version");
     const saved = localStorage.getItem("bikestore_catalog_products");
-    return saved ? JSON.parse(saved) : initialProducts;
+    return saved && catalogVersion === "2" ? JSON.parse(saved) : initialProducts;
   });
+  const [checkoutAfterAuth, setCheckoutAfterAuth] = useState(false);
 
   const [bookings, setBookings] = useState<MaintenanceBooking[]>(() => {
     const saved = localStorage.getItem("bikestore_maintenance_bookings");
@@ -39,6 +41,13 @@ function AppContent() {
 
   // Último pedido completado para la pantalla de éxito (CU-08, RF-10)
   const [completedOrder, setCompletedOrder] = useState<Order | null>(null);
+  const [orders, setOrders] = useState<Order[]>(() => {
+    const saved = localStorage.getItem("bikestore_orders");
+    return saved ? JSON.parse(saved) : [];
+  });
+  useEffect(() => {
+    localStorage.setItem("bikestore_orders", JSON.stringify(orders));
+  }, [orders]);
 
   // Modales interactivos
   const [isSearchOpen, setIsSearchOpen] = useState(false);
@@ -51,9 +60,11 @@ function AppContent() {
   const [toastAction, setToastAction] = useState<{ label: string; onClick: () => void } | null>(null);
 
   const { addItem } = useCart();
+  const { currentUser } = useAuth();
 
   useEffect(() => {
     localStorage.setItem("bikestore_catalog_products", JSON.stringify(products));
+    localStorage.setItem("bikestore_catalog_version", "2");
   }, [products]);
 
   useEffect(() => {
@@ -70,6 +81,17 @@ function AppContent() {
   };
 
   const handleNavigate = (page: Page) => {
+    if (page === "checkout" && !currentUser) {
+      setCheckoutAfterAuth(true);
+      setCurrentPage("login");
+      showToast("Para confirmar tu compra debes iniciar sesión. Te llevamos al acceso seguro.");
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
+
+    if (page !== "login" && page !== "register" && page !== "recovery") {
+      setCheckoutAfterAuth(false);
+    }
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
@@ -166,7 +188,10 @@ function AppContent() {
       {currentPage === "checkout" && (
         <CheckoutPage
           onNavigate={handleNavigate}
-          onOrderCompleted={(order) => setCompletedOrder(order)}
+          onOrderCompleted={(order) => {
+            setCompletedOrder(order);
+            setOrders((prev) => [order, ...prev]);
+          }}
         />
       )}
 
@@ -175,11 +200,17 @@ function AppContent() {
       )}
 
       {(currentPage === "login" || currentPage === "register" || currentPage === "recovery") && (
-        <AuthPage mode={currentPage} onNavigate={handleNavigate} />
+        <AuthPage
+          mode={currentPage}
+          onNavigate={handleNavigate}
+          returnAfterAuth={checkoutAfterAuth ? "checkout" : undefined}
+        />
       )}
 
       {currentPage === "admin" && (
         <AdminDashboardPage
+          orders={orders}
+          bookings={bookings}
           products={products}
           onNavigate={handleNavigate}
           onSaveProduct={handleSaveProduct}

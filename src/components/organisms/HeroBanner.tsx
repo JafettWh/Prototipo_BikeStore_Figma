@@ -16,7 +16,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
     <section className="relative w-full h-[640px] sm:h-[700px] bg-[#181915] text-white overflow-hidden flex items-center">
       {/* Imagen de fondo con gradientes deportivos */}
       <img
-        src="/assets/products/img-004.jpg"
+        src="/assets/products/img-029.jpg"
         alt="Ciclista de montaña en sendero"
         className="absolute inset-0 w-full h-full object-cover object-center scale-100 animate-fade-in"
       />

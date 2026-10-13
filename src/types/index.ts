@@ -93,6 +93,9 @@ export interface Order {
   customerName: string;
   email: string;
   address: string;
+  phone?: string;
+  shipping?: number;
+  createdAt?: string;
   city: string;
   paymentMethod: "card" | "pse" | "bancolombia";
   items: OrderItem[];

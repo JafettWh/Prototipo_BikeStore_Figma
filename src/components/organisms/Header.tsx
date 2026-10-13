@@ -29,26 +29,6 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-50 w-full shadow-md">
-      {/* Barra Superior de Anuncios */}
-      <div className="bg-[#ffd400] text-[#11120f] text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider py-1.5 px-4 sm:px-8 flex items-center justify-between">
-        <span className="flex items-center gap-1.5">
-          <Icon name="shield" size={13} /> Envío gratis a toda Colombia desde $300.000
-        </span>
-        <div className="flex items-center gap-4">
-          {onOpenTrackingModal && (
-            <button
-              onClick={onOpenTrackingModal}
-              className="hidden md:flex items-center gap-1 text-[#11120f] hover:underline font-bold bg-transparent border-0 cursor-pointer"
-            >
-              <Icon name="wrench" size={13} /> Consultar Estado de Taller
-            </button>
-          )}
-          <span className="hidden sm:inline font-bold">
-            Taller Certificado Shimano & SRAM · Palmira / Cali
-          </span>
-        </div>
-      </div>
-
       {/* Barra de Navegación Principal */}
       <div className="bg-[#11120f] text-white border-b border-[#2d2e2b] px-4 sm:px-8 h-20 flex items-center justify-between">
         {/* Logo con imagen transparente */}

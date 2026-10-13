@@ -4,6 +4,7 @@ import { formatCOP } from "../../utils/formatters";
 import Icon from "../atoms/Icon";
 import Button from "../atoms/Button";
 import Badge from "../atoms/Badge";
+import InvoiceDownload from "../molecules/InvoiceDownload";
 
 interface MaintenanceTrackingModalProps {
   isOpen: boolean;
@@ -212,6 +213,7 @@ export const MaintenanceTrackingModal: React.FC<MaintenanceTrackingModalProps> =
           )}
 
           <div className="pt-2 flex justify-end">
+            {searchedBooking && <InvoiceDownload record={searchedBooking} />}
             <Button variant="dark" size="sm" onClick={onClose}>
               Cerrar Consulta
             </Button>

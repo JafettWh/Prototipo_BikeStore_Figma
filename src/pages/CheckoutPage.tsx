@@ -46,6 +46,7 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
   const [name, setName] = useState(currentUser?.name || "Beatriz Mendoza");
   const [email, setEmail] = useState(currentUser?.email || "beatriz.m@gmail.com");
   const [address, setAddress] = useState("Calle 15 #28-40, Barrio San Pedro");
+  const [phone, setPhone] = useState("");
   const [department, setDepartment] = useState("Valle del Cauca");
   const [city, setCity] = useState("Palmira");
   const [paymentMethod, setPaymentMethod] = useState<"card" | "pse">("card");
@@ -95,6 +96,9 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
         customerName: name,
         email,
         address,
+        phone,
+        shipping,
+        createdAt: new Date().toISOString(),
         city: `${city}, ${department}`,
         paymentMethod,
         items: items.map((i) => ({
@@ -216,7 +220,8 @@ export const CheckoutPage: React.FC<CheckoutPageProps> = ({
                 <Input
                   label="Teléfono Móvil de Contacto"
                   required
-                  defaultValue="315 489 2031"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
                   placeholder="300 000 0000"
                 />
               </div>

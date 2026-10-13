@@ -3,6 +3,7 @@ import { Order, Page } from "../types";
 import { formatCOP } from "../utils/formatters";
 import Icon from "../components/atoms/Icon";
 import Button from "../components/atoms/Button";
+import InvoiceDownload from "../components/molecules/InvoiceDownload";
 
 interface SuccessPageProps {
   order: Order | null;
@@ -30,7 +31,7 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({ order, onNavigate }) =
       </h1>
 
       <p className="text-xs sm:text-sm text-[#6d6f69] max-w-lg mx-auto leading-relaxed mb-8">
-        Tu pago ha sido procesado de manera exitosa y hemos generado tu comprobante de compra. Enviamos la confirmación detallada y factura electrónica a <strong className="text-[#11120f]">{email}</strong>.
+        Tu pedido ha sido registrado para <strong className="text-[#11120f]">{email}</strong>. Descarga tu comprobante con los datos de entrega y el detalle de productos. Este prototipo no procesa pagos reales ni envía facturas por correo.
       </p>
 
       {/* Stepper de Despacho de la Orden */}
@@ -72,6 +73,7 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({ order, onNavigate }) =
       </div>
 
       <div className="flex flex-wrap items-center justify-center gap-4">
+        {order && <InvoiceDownload record={order} />}
         <Button
           variant="primary"
           size="lg"

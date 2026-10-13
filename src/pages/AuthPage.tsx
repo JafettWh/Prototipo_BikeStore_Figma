@@ -8,13 +8,16 @@ import Input from "../components/atoms/Input";
 interface AuthPageProps {
   mode: "login" | "register" | "recovery";
   onNavigate: (page: Page) => void;
+  returnAfterAuth?: Page;
 }
 
-export const AuthPage: React.FC<AuthPageProps> = ({ mode, onNavigate }) => {
+export const AuthPage: React.FC<AuthPageProps> = ({ mode, onNavigate, returnAfterAuth }) => {
   const { login, register } = useAuth();
 
   // Estados de login y registro
-  const [email, setEmail] = useState("a.silva@bikestore.com");
+  const [email, setEmail] = useState(
+    returnAfterAuth === "checkout" ? "beatriz.m@gmail.com" : "a.silva@bikestore.com"
+  );
   const [password, setPassword] = useState("12345678");
   const [name, setName] = useState("");
   const [error, setError] = useState("");
@@ -46,8 +49,10 @@ export const AuthPage: React.FC<AuthPageProps> = ({ mode, onNavigate }) => {
     } else {
       setSuccessMsg(res.message);
       setTimeout(() => {
-        // Redirige automáticamente de acuerdo al rol detectado por las credenciales
-        if (res.user?.role === "admin") {
+        // Un acceso solicitado desde la compra vuelve al checkout; los demás respetan el rol.
+        if (returnAfterAuth) {
+          onNavigate(returnAfterAuth);
+        } else if (res.user?.role === "admin") {
           onNavigate("admin");
         } else {
           onNavigate("home");
@@ -77,7 +82,7 @@ export const AuthPage: React.FC<AuthPageProps> = ({ mode, onNavigate }) => {
     } else {
       setSuccessMsg("¡Registro exitoso! Iniciando sesión en la tienda...");
       setTimeout(() => {
-        onNavigate("home");
+        onNavigate(returnAfterAuth || "home");
       }, 900);
     }
   };

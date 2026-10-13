@@ -197,7 +197,7 @@ export const HomePage: React.FC<HomePageProps> = ({
         <div className="grid grid-cols-1 lg:grid-cols-12 bg-[#151613] text-white border border-[#2d2e2b] overflow-hidden rounded-sm shadow-xl">
           <div className="lg:col-span-6 relative min-h-[340px] lg:min-h-[460px]">
             <img
-              src="/assets/products/img-023.jpg"
+              src="/assets/products/img-040.jpg"
               alt="Mecánico realizando mantenimiento de bicicleta"
               className="w-full h-full object-cover"
             />

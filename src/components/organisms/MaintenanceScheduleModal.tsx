@@ -4,6 +4,7 @@ import { formatCOP, generateBookingId } from "../../utils/formatters";
 import Icon from "../atoms/Icon";
 import Button from "../atoms/Button";
 import Input from "../atoms/Input";
+import InvoiceDownload from "../molecules/InvoiceDownload";
 
 interface MaintenanceScheduleModalProps {
   isOpen: boolean;
@@ -142,6 +143,7 @@ export const MaintenanceScheduleModal: React.FC<MaintenanceScheduleModalProps> =
             </div>
 
             <div className="flex justify-center gap-3">
+              <InvoiceDownload record={confirmedBooking} />
               <Button variant="primary" onClick={handleClose}>
                 Entendido, Cerrar
               </Button>
