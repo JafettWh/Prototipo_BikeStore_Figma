@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react"
-import { Product, Page, User, Order, MaintenanceBooking } from "../types"
+import { Product, Page, User, Order } from "../types"
 import { exportReport, salesSummary } from "../utils/documents"
 import { useAuth } from "../context/AuthContext"
 import { formatCOP } from "../utils/formatters"
@@ -14,7 +14,6 @@ import UserFormModal from "../components/organisms/UserFormModal"
 
 interface AdminDashboardPageProps {
   orders: Order[]
-  bookings: MaintenanceBooking[]
   products: Product[]
   onNavigate: (page: Page) => void
   onSaveProduct: (product: Partial<Product>) => void
@@ -24,7 +23,6 @@ interface AdminDashboardPageProps {
 export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   products = [],
   orders = [],
-  bookings = [],
   onNavigate,
   onSaveProduct,
   onDeactivateProduct,
@@ -50,25 +48,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   )
   const [salesChartMonth, setSalesChartMonth] = useState(new Date().getMonth())
   const [salesCategory, setSalesCategory] = useState("Todas")
-  const [maintenanceChartView, setMaintenanceChartView] =
-    useState<"days" | "months">("months")
-  const [maintenanceChartYear, setMaintenanceChartYear] = useState(() =>
-    bookings.length
-      ? Math.max(
-          ...bookings.map((booking) =>
-            new Date(`${booking.date}T00:00:00`).getFullYear(),
-          ),
-        )
-      : new Date().getFullYear(),
-  )
-  const [maintenanceChartMonth, setMaintenanceChartMonth] = useState(() =>
-    bookings.length
-      ? new Date(
-          `${[...bookings].sort((a, b) => b.date.localeCompare(a.date))[0].date}T00:00:00`,
-        ).getMonth()
-      : new Date().getMonth(),
-  )
-  const [maintenanceType, setMaintenanceType] = useState("Todos")
 
   // Modales de productos
   const [isProductModalOpen, setIsProductModalOpen] = useState(false)
@@ -84,10 +63,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const [adminNotice, setAdminNotice] = useState("")
   const [isExporting, setIsExporting] = useState(false)
   const summary = useMemo(() => salesSummary(orders), [orders])
-  const maintenanceValue = useMemo(
-    () => bookings.reduce((total, booking) => total + booking.costEstimate, 0),
-    [bookings],
-  )
   const monthOptions = useMemo(
     () =>
       Array.from({ length: 12 }, (_, month) => ({
@@ -114,23 +89,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         ]),
       ).sort((a, b) => b - a),
     [orders],
-  )
-  const maintenanceYears = useMemo(
-    () =>
-      Array.from(
-        new Set([
-          new Date().getFullYear(),
-          ...bookings.map((booking) =>
-            new Date(`${booking.date}T00:00:00`).getFullYear(),
-          ),
-        ]),
-      ).sort((a, b) => b - a),
-    [bookings],
-  )
-  const maintenanceTypes = useMemo(
-    () =>
-      Array.from(new Set(bookings.map((booking) => booking.serviceName))).sort(),
-    [bookings],
   )
   const productSectionById = useMemo(
     () => new Map(products.map((product) => [product.id, product.section])),
@@ -183,56 +141,9 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
     salesChartView,
     salesChartYear,
   ])
-  const maintenanceChartData = useMemo(() => {
-    const pointCount =
-      maintenanceChartView === "days"
-        ? new Date(
-            maintenanceChartYear,
-            maintenanceChartMonth + 1,
-            0,
-          ).getDate()
-        : 12
-
-    return Array.from({ length: pointCount }, (_, index) => ({
-      label:
-        maintenanceChartView === "days"
-          ? String(index + 1)
-          : monthOptions[index].shortLabel,
-      total: bookings.filter((booking) => {
-        const bookingDate = new Date(`${booking.date}T00:00:00`)
-        const matchesPeriod =
-          bookingDate.getFullYear() === maintenanceChartYear &&
-          (maintenanceChartView === "months" ||
-            bookingDate.getMonth() === maintenanceChartMonth) &&
-          (maintenanceChartView === "days"
-            ? bookingDate.getDate() === index + 1
-            : bookingDate.getMonth() === index)
-        const matchesType =
-          maintenanceType === "Todos" ||
-          booking.serviceName === maintenanceType
-
-        return (
-          matchesPeriod &&
-          matchesType &&
-          booking.status === "Lista para entrega"
-        )
-      }).length,
-    }))
-  }, [
-    bookings,
-    maintenanceChartMonth,
-    maintenanceChartView,
-    maintenanceChartYear,
-    maintenanceType,
-    monthOptions,
-  ])
   const maxChartSales = Math.max(
     1,
     ...salesChartData.map((point) => point.total),
-  )
-  const maxChartMaintenance = Math.max(
-    1,
-    ...maintenanceChartData.map((point) => point.total),
   )
 
   const showNotice = (msg: string) => {
@@ -272,7 +183,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
   const handleExportReport = async (format: "Excel" | "PDF") => {
     setIsExporting(true)
     try {
-      await exportReport(format, orders, bookings, products, users)
+      await exportReport(format, orders, products, users)
       showNotice(`Informe ${format} generado. Descarga iniciada.`)
     } catch {
       showNotice("No se pudo generar el informe. Intenta nuevamente.")
@@ -455,7 +366,7 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
         {/* PESTAÑA 1: DASHBOARD */}
         {activeTab === "dashboard" && (
           <div className="space-y-8">
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
               <MetricCard
                 title="Ventas Totales del Mes"
                 value={formatCOP(summary.total)}
@@ -474,12 +385,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 subtext="Promedio por pedido del mes"
                 iconName="shield"
               />
-              <MetricCard
-                title="Mantenimientos Solicitados"
-                value={String(bookings.length)}
-                subtext={`${formatCOP(maintenanceValue)} en valor estimado, no cobrado`}
-                iconName="wrench"
-              />
             </div>
 
             <div className="bg-amber-50 border border-amber-200 p-5 rounded-sm flex items-start gap-3 shadow-sm">
@@ -493,9 +398,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
                 <ul className="list-disc pl-4 space-y-1 text-amber-800">
                   <li>
                     <strong>Inventario:</strong> {products.filter((p) => p.stock === 0).length} productos sin existencias.
-                  </li>
-                  <li>
-                    <strong>Taller Técnico:</strong> {bookings.filter((b) => b.status === "Lista para entrega").length} reservas listas para entrega (incluye ejemplos iniciales).
                   </li>
                 </ul>
               </div>
@@ -664,171 +566,6 @@ export const AdminDashboardPage: React.FC<AdminDashboardPageProps> = ({
               </p>
             </div>
 
-            <div className="bg-white border border-[#dedfd9] rounded-sm shadow-sm p-6">
-              <div>
-                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
-                  <div>
-                    <h3 className="font-['Barlow_Condensed'] font-bold text-2xl uppercase text-[#11120f]">
-                      {maintenanceChartView === "days"
-                        ? "Mantenimientos realizados por día"
-                        : "Mantenimientos realizados mensualmente"}
-                    </h3>
-                    <p className="text-xs text-[#6d6f69] mb-0">
-                      Se contabilizan por fecha de cita únicamente los servicios
-                      finalizados con estado «Lista para entrega».
-                    </p>
-                  </div>
-                  <Badge variant="dark">Taller finalizado</Badge>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 p-4 bg-[#f4f4f0] border border-[#dedfd9] mt-5">
-                  <label className="flex flex-col gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#11120f]">
-                    Vista temporal
-                    <select
-                      value={maintenanceChartView}
-                      onChange={(event) =>
-                        setMaintenanceChartView(
-                          event.target.value as "days" | "months",
-                        )
-                      }
-                      className="h-10 bg-white border border-[#dedfd9] text-xs px-3 focus:outline-none focus:border-[#ffd400]"
-                    >
-                      <option value="days">Todos los días del mes</option>
-                      <option value="months">Todos los meses del año</option>
-                    </select>
-                  </label>
-                  <label className="flex flex-col gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#11120f]">
-                    Año
-                    <select
-                      value={maintenanceChartYear}
-                      onChange={(event) =>
-                        setMaintenanceChartYear(Number(event.target.value))
-                      }
-                      className="h-10 bg-white border border-[#dedfd9] text-xs px-3 focus:outline-none focus:border-[#ffd400]"
-                    >
-                      {maintenanceYears.map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="flex flex-col gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#11120f]">
-                    Mes
-                    <select
-                      value={maintenanceChartMonth}
-                      onChange={(event) =>
-                        setMaintenanceChartMonth(Number(event.target.value))
-                      }
-                      disabled={maintenanceChartView === "months"}
-                      className="h-10 bg-white border border-[#dedfd9] text-xs px-3 focus:outline-none focus:border-[#ffd400] disabled:bg-[#e7e7e2] disabled:text-[#8b8d86]"
-                    >
-                      {monthOptions.map((month) => (
-                        <option key={month.value} value={month.value}>
-                          {month.label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="flex flex-col gap-1.5 text-[10px] font-bold uppercase tracking-wider text-[#11120f]">
-                    Tipo de mantenimiento
-                    <select
-                      value={maintenanceType}
-                      onChange={(event) =>
-                        setMaintenanceType(event.target.value)
-                      }
-                      className="h-10 bg-white border border-[#dedfd9] text-xs px-3 focus:outline-none focus:border-[#ffd400]"
-                    >
-                      <option value="Todos">Todos los mantenimientos</option>
-                      {maintenanceTypes.map((type) => (
-                        <option key={type} value={type}>
-                          {type}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-5 text-[11px]">
-                  <div className="bg-[#f4f4f0] border-l-4 border-[#ffd400] px-3 py-2 text-[#555750]">
-                    <strong className="text-[#11120f]">
-                      Eje X ·{" "}
-                      {maintenanceChartView === "days" ? "Día" : "Mes"}:
-                    </strong>{" "}
-                    {maintenanceChartView === "days"
-                      ? `todos los días de ${monthOptions[maintenanceChartMonth].label} de ${maintenanceChartYear}.`
-                      : `todos los meses del año ${maintenanceChartYear}.`}
-                  </div>
-                  <div className="bg-[#f4f4f0] border-l-4 border-[#11120f] px-3 py-2 text-[#555750]">
-                    <strong className="text-[#11120f]">
-                      Eje Y · Mantenimientos:
-                    </strong>{" "}
-                    cantidad de servicios finalizados de{" "}
-                    {maintenanceType === "Todos"
-                      ? "todos los tipos"
-                      : maintenanceType}
-                    .
-                  </div>
-                </div>
-              </div>
-
-              <div className="max-w-full overflow-x-auto overscroll-x-contain mt-6 pb-3">
-                <div
-                  className={`flex ${
-                    maintenanceChartView === "days"
-                      ? "min-w-[960px]"
-                      : "min-w-[680px]"
-                  }`}
-                >
-                  <div className="w-20 shrink-0 flex">
-                    <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#6d6f69] [writing-mode:vertical-rl] rotate-180 text-center py-5">
-                      Eje Y · Cantidad
-                    </span>
-                    <div className="h-64 flex-1 flex flex-col justify-between items-end pr-2 pb-7 pt-2 text-[10px] font-bold text-[#6d6f69]">
-                      <span>{maxChartMaintenance}</span>
-                      <span>{Math.ceil(maxChartMaintenance / 2)}</span>
-                      <span>0</span>
-                    </div>
-                  </div>
-
-                  <div className="flex-1">
-                    <div className="h-64 flex items-end gap-3 border-b border-l border-[#dedfd9] px-3 pb-2 pt-6 bg-[linear-gradient(to_bottom,transparent_49%,#f1f1ed_50%,transparent_51%)]">
-                      {maintenanceChartData.map((point, index) => (
-                        <div
-                          key={`${point.label}-${index}`}
-                          className="flex-1 min-w-8 flex flex-col items-center gap-2 group"
-                          title={`${maintenanceChartView === "days" ? "Día" : "Mes"} ${point.label}: ${point.total} mantenimientos finalizados`}
-                        >
-                          <span className="text-[11px] font-extrabold text-[#11120f]">
-                            {point.total}
-                          </span>
-                          <div
-                            style={{
-                              height: `${(point.total / maxChartMaintenance) * 180}px`,
-                            }}
-                            className="w-full min-h-1 bg-[#11120f] border-t-4 border-[#ffd400] rounded-t-sm transition-colors group-hover:bg-[#ffd400]"
-                          />
-                          <span className="text-[10px] font-bold uppercase text-[#6d6f69]">
-                            {point.label}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                    <p className="text-center text-[9px] font-extrabold uppercase tracking-wider text-[#6d6f69] mt-2 mb-0">
-                      Eje X ·{" "}
-                      {maintenanceChartView === "days"
-                        ? "Día del mes"
-                        : "Mes del año"}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <p className="text-[10px] text-[#6d6f69] text-center mb-0">
-                Usa la barra horizontal inferior para recorrer todos los{" "}
-                {maintenanceChartView === "days" ? "días" : "meses"} sin salir
-                del contenedor.
-              </p>
-            </div>
           </div>
         )}
 

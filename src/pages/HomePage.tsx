@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Product, Page } from "../types";
+import { Product } from "../types";
 import { formatCOP } from "../utils/formatters";
 import HeroBanner from "../components/organisms/HeroBanner";
 import ProductCard from "../components/molecules/ProductCard";
@@ -10,16 +10,12 @@ interface HomePageProps {
   products: Product[];
   onAddToCart: (product: Product) => void;
   onSelectProduct: (product: Product) => void;
-  onNavigate: (page: Page) => void;
-  onOpenMaintenanceModal: () => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
   products,
   onAddToCart,
   onSelectProduct,
-  onNavigate,
-  onOpenMaintenanceModal,
 }) => {
   // Estados para filtros de CU-01
   const [selectedCategory, setSelectedCategory] = useState<string>("Todas");
@@ -60,7 +56,6 @@ export const HomePage: React.FC<HomePageProps> = ({
     <main className="w-full">
       {/* Hero Principal */}
       <HeroBanner
-        onNavigate={onNavigate}
         onExploreCatalog={() => {
           document.getElementById("bicicletas")?.scrollIntoView({ behavior: "smooth" });
         }}
@@ -98,14 +93,14 @@ export const HomePage: React.FC<HomePageProps> = ({
 
         <div className="flex items-center justify-center gap-4 p-6 sm:p-7">
           <span className="text-[#b59700]">
-            <Icon name="wrench" size={26} />
+            <Icon name="sparkles" size={26} />
           </span>
           <div className="text-left">
             <b className="text-xs font-bold text-[#11120f] block uppercase tracking-wide">
-              Taller Mecánico Especializado
+              Productos 100% Originales
             </b>
             <span className="text-[11px] text-[#6d6f69]">
-              Alistamiento certificado Shimano & SRAM
+              Marcas premium con respaldo oficial
             </span>
           </div>
         </div>
@@ -190,56 +185,6 @@ export const HomePage: React.FC<HomePageProps> = ({
             ))}
           </div>
         )}
-      </section>
-
-      {/* BANNER DESTACADO: TALLER DE MANTENIMIENTO */}
-      <section className="max-w-[1400px] mx-auto px-6 sm:px-10 my-16">
-        <div className="grid grid-cols-1 lg:grid-cols-12 bg-[#151613] text-white border border-[#2d2e2b] overflow-hidden rounded-sm shadow-xl">
-          <div className="lg:col-span-6 relative min-h-[340px] lg:min-h-[460px]">
-            <img
-              src="/assets/products/img-040.jpg"
-              alt="Mecánico realizando mantenimiento de bicicleta"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-[#151613] hidden lg:block" />
-          </div>
-
-          <div className="lg:col-span-6 p-8 sm:p-14 flex flex-col justify-center text-left">
-            <div className="inline-flex items-center gap-2 text-[#ffd400] text-xs font-extrabold uppercase tracking-widest mb-3">
-              <Icon name="wrench" size={15} />
-              Taller Autorizado Shimano & SRAM
-            </div>
-
-            <h2 className="font-['Barlow_Condensed'] font-extrabold text-3xl sm:text-5xl uppercase tracking-tight text-white mb-4">
-              Tu bicicleta, siempre a punto para la próxima ruta.
-            </h2>
-
-            <p className="text-xs sm:text-sm text-neutral-300 leading-relaxed mb-6">
-              Mantenimiento preventivo, desengrase ultrasónico y purga hidráulica con técnicos certificados. Agenda tu cita en línea o consulta el estado de avance de tu máquina en nuestro banco de trabajo.
-            </p>
-
-            <div className="flex flex-wrap items-center gap-4">
-              <Button
-                variant="primary"
-                size="md"
-                onClick={onOpenMaintenanceModal}
-                icon={<Icon name="calendar" size={16} />}
-                iconPosition="left"
-              >
-                Agendar Cita en Taller
-              </Button>
-
-              <Button
-                variant="secondary"
-                size="md"
-                onClick={() => onNavigate("maintenance")}
-                icon={<Icon name="arrow" size={16} />}
-              >
-                Ver Planes y Tarifas
-              </Button>
-            </div>
-          </div>
-        </div>
       </section>
 
       {/* SECCIÓN 2: COMPONENTES */}

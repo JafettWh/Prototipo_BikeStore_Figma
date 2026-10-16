@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import type { Order, MaintenanceBooking } from "../../types";
+import type { Order } from "../../types";
 import { downloadInvoice } from "../../utils/documents";
 import Button from "../atoms/Button";
 import Icon from "../atoms/Icon";
 
-export default function InvoiceDownload({ record }: { record: Order | MaintenanceBooking }) {
+export default function InvoiceDownload({ record }: { record: Order }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   return (

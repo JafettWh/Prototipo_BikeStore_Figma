@@ -17,57 +17,63 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             <Logo onClick={() => onNavigate("home")} size="lg" variant="dark" />
             <p className="text-xs text-[#8a8c84] leading-relaxed mt-2 max-w-sm">
               La plataforma definitiva para apasionados del ciclismo de ruta, montaña y aventura.
-              Distribuidor de bicicletas premium, componentes de competición y taller certificado en Palmira y Valle del Cauca.
+              Distribuidor de bicicletas premium y componentes de competición en Palmira y Valle del Cauca.
             </p>
             <div className="flex items-center gap-2 text-[11px] text-[#ffd400] font-bold uppercase tracking-wider mt-2">
-              <Icon name="shield" size={14} /> Centro Autorizado Shimano Service Center & SRAM
+              <Icon name="shield" size={14} /> Productos originales con respaldo oficial
             </div>
           </div>
 
-          {/* Columna 2: Taller y Servicios */}
+          {/* Columna 2: Catálogo */}
           <div>
             <h4 className="text-[11px] font-extrabold uppercase tracking-widest text-[#ffd400] mb-5">
-              Taller & Mantenimiento
+              Explorar Catálogo
             </h4>
             <ul className="space-y-3 text-xs">
               <li>
                 <button
                   type="button"
-                  onClick={() => onNavigate("maintenance")}
+                  onClick={() => onNavigate("home")}
                   className="bg-transparent border-0 p-0 text-[#a2a39e] hover:text-white transition-colors cursor-pointer"
                 >
-                  Agendar Cita en Taller
+                  Bicicletas
                 </button>
               </li>
               <li>
                 <button
                   type="button"
-                  onClick={() => onNavigate("maintenance")}
+                  onClick={() => {
+                    onNavigate("home");
+                    setTimeout(() => document.getElementById("componentes")?.scrollIntoView({ behavior: "smooth" }), 100);
+                  }}
                   className="bg-transparent border-0 p-0 text-[#a2a39e] hover:text-white transition-colors cursor-pointer"
                 >
-                  Mantenimiento General Pro
+                  Componentes
                 </button>
               </li>
               <li>
                 <button
                   type="button"
-                  onClick={() => onNavigate("maintenance")}
+                  onClick={() => {
+                    onNavigate("home");
+                    setTimeout(() => document.getElementById("accesorios")?.scrollIntoView({ behavior: "smooth" }), 100);
+                  }}
                   className="bg-transparent border-0 p-0 text-[#a2a39e] hover:text-white transition-colors cursor-pointer"
                 >
-                  Overhaul y Purga de Suspensiones
+                  Accesorios
                 </button>
               </li>
               <li>
                 <button
                   type="button"
-                  onClick={() => onNavigate("maintenance")}
+                  onClick={() => onNavigate("cart")}
                   className="bg-transparent border-0 p-0 text-[#a2a39e] hover:text-white transition-colors cursor-pointer"
                 >
-                  Servicio Técnico E-Bikes
+                  Carrito de compras
                 </button>
               </li>
               <li>
-                <span className="text-[#6d6f69]">Garantías y Repuestos Originales</span>
+                <span className="text-[#6d6f69]">Garantías de productos originales</span>
               </li>
             </ul>
           </div>
@@ -167,7 +173,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           <div className="flex items-center gap-6">
             <span>Términos y Condiciones</span>
             <span>Tratamiento de Datos Personales</span>
-            <span>Soporte Técnico</span>
+            <span>Ayuda al Cliente</span>
           </div>
         </div>
       </div>

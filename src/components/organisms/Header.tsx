@@ -9,14 +9,12 @@ interface HeaderProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
   onOpenSearch: () => void;
-  onOpenTrackingModal?: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
   currentPage,
   onNavigate,
   onOpenSearch,
-  onOpenTrackingModal,
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { currentUser, logout } = useAuth();
@@ -52,22 +50,6 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             Bicicletas
-          </button>
-
-          <button
-            type="button"
-            onClick={() => handleNav("maintenance")}
-            className={`relative text-xs font-bold uppercase tracking-widest py-2 flex items-center gap-1.5 transition-colors cursor-pointer bg-transparent border-0 ${
-              currentPage === "maintenance"
-                ? "text-[#ffd400] border-b-2 border-[#ffd400]"
-                : "text-neutral-300 hover:text-[#ffd400]"
-            }`}
-          >
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#ffd400] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#ffd400]"></span>
-            </span>
-            Mantenimiento & Taller
           </button>
 
           <button
@@ -195,15 +177,6 @@ export const Header: React.FC<HeaderProps> = ({
             Bicicletas de Montaña, Ruta & Gravel
           </button>
           <button
-            onClick={() => handleNav("maintenance")}
-            className="py-2.5 text-xs font-bold uppercase tracking-wider text-left text-[#ffd400] flex items-center justify-between border-b border-white/5 bg-transparent"
-          >
-            <span>Taller & Mantenimiento Especializado</span>
-            <span className="text-[10px] bg-[#ffd400] text-black px-2 py-0.5 font-extrabold rounded-sm">
-              Nuevo
-            </span>
-          </button>
-          <button
             onClick={() => {
               handleNav("home");
               setTimeout(() => {
@@ -225,17 +198,6 @@ export const Header: React.FC<HeaderProps> = ({
           >
             Accesorios & Protección
           </button>
-          {onOpenTrackingModal && (
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenTrackingModal();
-              }}
-              className="py-2.5 text-xs font-bold uppercase tracking-wider text-left text-neutral-300 hover:text-white flex items-center gap-2 bg-transparent"
-            >
-              <Icon name="wrench" size={14} /> Consultar Estado de Reparación
-            </button>
-          )}
           {currentUser?.role === "admin" && (
             <button
               onClick={() => handleNav("admin")}

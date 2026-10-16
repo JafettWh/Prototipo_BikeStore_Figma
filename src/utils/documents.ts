@@ -1,4 +1,4 @@
-import type { Order, MaintenanceBooking, Product, User } from "../types";
+import type { Order, Product, User } from "../types";
 import { formatCOP } from "./formatters";
 
 export function salesSummary(orders: Order[]) {
@@ -67,43 +67,30 @@ async function pdfBase(title: string) {
   return { doc, line };
 }
 
-export async function downloadInvoice(record: Order | MaintenanceBooking) {
-  const isOrder = "items" in record;
-  const { doc, line } = await pdfBase(isOrder ? "Factura / comprobante de compra" : "Comprobante de mantenimiento");
+export async function downloadInvoice(record: Order) {
+  const { doc, line } = await pdfBase("Factura / comprobante de compra");
   line(`BikeStore · Palmira, Colombia · Referencia: ${record.id}`);
-  if (isOrder) {
-    line(`Fecha: ${record.date} · Estado: ${record.status}`);
-    line(`Cliente: ${record.customerName}`);
-    line(`Correo: ${record.email} · Teléfono: ${record.phone || "No registrado"}`);
-    line(`Dirección: ${record.address} · ${record.city}`);
-    line(`Método de pago: ${record.paymentMethod === "card" ? "Tarjeta" : record.paymentMethod.toUpperCase()}`);
-    line("Detalle de productos (precios con IVA incluido):");
-    record.items.forEach((item) => {
-      line(`${item.name}${item.selectedSize ? ` · Talla ${item.selectedSize}` : ""}`);
-      line(`${item.qty} x ${formatCOP(item.price)} = ${formatCOP(item.qty * item.price)}`);
-    });
-    const includedTax = Math.round(record.subtotal - record.subtotal / 1.19);
-    line(`Base antes de IVA: ${formatCOP(record.subtotal - includedTax)}`);
-    line(`IVA incluido (19%): ${formatCOP(includedTax)}`);
-    line(`Subtotal: ${formatCOP(record.subtotal)}`);
-    line(`Envío: ${formatCOP(record.shipping ?? record.total - record.subtotal)}`);
-    line(`TOTAL: ${formatCOP(record.total)}`);
-  } else {
-    line(`Cliente: ${record.clientName}`);
-    line(`Correo: ${record.email} · Teléfono: ${record.phone}`);
-    line(`Bicicleta: ${record.bikeBrand} · ${record.bikeType}`);
-    line(`Servicio: ${record.serviceName}`);
-    line(`Cita: ${record.date} · ${record.timeSlot}`);
-    line(`Estado: ${record.status} · Técnico: ${record.technician}`);
-    line(`Observaciones: ${record.notes || "Sin observaciones"}`);
-    line(`TOTAL ESTIMADO: ${formatCOP(record.costEstimate)}`);
-    line("Reserva pendiente de pago en taller. El importe definitivo depende del diagnóstico.");
-  }
+  line(`Fecha: ${record.date} · Estado: ${record.status}`);
+  line(`Cliente: ${record.customerName}`);
+  line(`Correo: ${record.email} · Teléfono: ${record.phone || "No registrado"}`);
+  line(`Dirección: ${record.address} · ${record.city}`);
+  line(`Método de pago: ${record.paymentMethod === "card" ? "Tarjeta" : record.paymentMethod.toUpperCase()}`);
+  line("Detalle de productos (precios con IVA incluido):");
+  record.items.forEach((item) => {
+    line(`${item.name}${item.selectedSize ? ` · Talla ${item.selectedSize}` : ""}`);
+    line(`${item.qty} x ${formatCOP(item.price)} = ${formatCOP(item.qty * item.price)}`);
+  });
+  const includedTax = Math.round(record.subtotal - record.subtotal / 1.19);
+  line(`Base antes de IVA: ${formatCOP(record.subtotal - includedTax)}`);
+  line(`IVA incluido (19%): ${formatCOP(includedTax)}`);
+  line(`Subtotal: ${formatCOP(record.subtotal)}`);
+  line(`Envío: ${formatCOP(record.shipping ?? record.total - record.subtotal)}`);
+  line(`TOTAL: ${formatCOP(record.total)}`);
   line("Documento informativo. No constituye factura electrónica validada por la DIAN.");
   doc.save(`BikeStore-${record.id}.pdf`);
 }
 
-export async function exportReport(format: "PDF" | "Excel", orders: Order[], bookings: MaintenanceBooking[], products: Product[], users: User[]) {
+export async function exportReport(format: "PDF" | "Excel", orders: Order[], products: Product[], users: User[]) {
   const summary = salesSummary(orders);
   const metrics: [string, string | number][] = [
     ["Periodo", summary.period], ["Ventas (COP)", summary.total],
@@ -111,8 +98,6 @@ export async function exportReport(format: "PDF" | "Excel", orders: Order[], boo
     ["Productos activos", products.filter((p) => p.status === "Activo").length],
     ["Productos agotados", products.filter((p) => p.stock === 0).length],
     ["Usuarios activos", users.filter((u) => u.status === "Activo").length],
-    ["Reservas de taller (incluye ejemplos iniciales)", bookings.length],
-    ["Valor estimado de reservas, no ingresos (COP)", bookings.reduce((sum, b) => sum + b.costEstimate, 0)],
   ];
   const chart = chartImage(summary.days);
   if (format === "PDF") {
@@ -138,7 +123,6 @@ export async function exportReport(format: "PDF" | "Excel", orders: Order[], boo
   sheet.addRow(["BIKESTORE · MÉTRICAS Y RENDIMIENTO"]);
   metrics.forEach((row) => sheet.addRow(row));
   sheet.addRow(["Fuente: pedidos locales de este navegador"]);
-  sheet.addRow(["Las reservas no representan ingresos cobrados."]);
   sheet.addImage(workbook.addImage({ base64: chart, extension: "png" }), {
     tl: { col: 0, row: 16 }, ext: { width: 700, height: 210 },
   });

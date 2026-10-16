@@ -1,7 +1,6 @@
 export type Page =
   | "home"
   | "product"
-  | "maintenance"
   | "cart"
   | "checkout"
   | "success"
@@ -104,33 +103,4 @@ export interface Order {
   total: number;
   status: "Pagado" | "En preparación" | "En camino" | "Entregado";
   date: string;
-}
-
-export interface MaintenanceService {
-  id: string;
-  name: string;
-  category: "Preventivo" | "Avanzado" | "Especializado";
-  price: number;
-  duration: string;
-  image: string;
-  summary: string;
-  popular?: boolean;
-  includes: string[];
-}
-
-export interface MaintenanceBooking {
-  id: string; // Radicado único ej. TALLER-7842
-  clientName: string;
-  email: string;
-  phone: string;
-  bikeBrand: string;
-  bikeType: "Montaña (MTB)" | "Ruta / Carretera" | "Gravel" | "E-Bike" | "Urbana";
-  serviceId: string;
-  serviceName: string;
-  date: string;
-  timeSlot: string;
-  notes?: string;
-  status: "Recibida" | "En diagnóstico" | "En reparación" | "Lista para entrega";
-  technician: string;
-  costEstimate: number;
 }

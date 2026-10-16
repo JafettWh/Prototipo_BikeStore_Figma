@@ -7,7 +7,6 @@ interface MainLayoutProps {
   currentPage: Page;
   onNavigate: (page: Page) => void;
   onOpenSearch: () => void;
-  onOpenTrackingModal: () => void;
   children: React.ReactNode;
 }
 
@@ -15,7 +14,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
   currentPage,
   onNavigate,
   onOpenSearch,
-  onOpenTrackingModal,
   children,
 }) => {
   const isMinimalLayout = currentPage === "admin" || currentPage === "success";
@@ -28,7 +26,6 @@ export const MainLayout: React.FC<MainLayoutProps> = ({
           currentPage={currentPage}
           onNavigate={onNavigate}
           onOpenSearch={onOpenSearch}
-          onOpenTrackingModal={onOpenTrackingModal}
         />
       )}
 

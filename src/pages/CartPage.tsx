@@ -220,6 +220,7 @@ export const CartPage: React.FC<CartPageProps> = ({ onNavigate }) => {
               <Button
                 variant="outline"
                 size="sm"
+                className="w-[120px]"
                 onClick={() => setItemToDelete(null)}
               >
                 Conservar
@@ -227,6 +228,7 @@ export const CartPage: React.FC<CartPageProps> = ({ onNavigate }) => {
               <Button
                 variant="danger"
                 size="sm"
+                style={{ fontSize: "14px" }}
                 onClick={confirmDelete}
               >
                 Eliminar Producto

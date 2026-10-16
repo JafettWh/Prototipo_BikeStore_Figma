@@ -1,21 +1,17 @@
 import React, { useState, useEffect } from "react";
-import { Page, Product, Order, MaintenanceBooking, MaintenanceService } from "./types";
+import { Page, Product, Order } from "./types";
 import { initialProducts } from "./data/products";
-import { maintenanceServices, sampleBookings } from "./data/maintenance";
 import { AuthProvider, useAuth } from "./context/AuthContext";
 import { CartProvider, useCart } from "./context/CartContext";
 
 // Componentes Templates y Organismos
 import MainLayout from "./components/templates/MainLayout";
 import SearchModal from "./components/organisms/SearchModal";
-import MaintenanceScheduleModal from "./components/organisms/MaintenanceScheduleModal";
-import MaintenanceTrackingModal from "./components/organisms/MaintenanceTrackingModal";
 import Toast from "./components/molecules/Toast";
 
 // Páginas Atómicas
 import HomePage from "./pages/HomePage";
 import ProductDetailPage from "./pages/ProductDetailPage";
-import MaintenancePage from "./pages/MaintenancePage";
 import CartPage from "./pages/CartPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import SuccessPage from "./pages/SuccessPage";
@@ -30,11 +26,6 @@ function AppContent() {
     return saved && catalogVersion === "2" ? JSON.parse(saved) : initialProducts;
   });
   const [checkoutAfterAuth, setCheckoutAfterAuth] = useState(false);
-
-  const [bookings, setBookings] = useState<MaintenanceBooking[]>(() => {
-    const saved = localStorage.getItem("bikestore_maintenance_bookings");
-    return saved ? JSON.parse(saved) : sampleBookings;
-  });
 
   // Producto seleccionado para el detalle dinámico (CU-02)
   const [selectedProduct, setSelectedProduct] = useState<Product>(products[0]);
@@ -51,9 +42,6 @@ function AppContent() {
 
   // Modales interactivos
   const [isSearchOpen, setIsSearchOpen] = useState(false);
-  const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
-  const [serviceToBook, setServiceToBook] = useState<MaintenanceService | null>(null);
-  const [isTrackingModalOpen, setIsTrackingModalOpen] = useState(false);
 
   // Toast reactivo
   const [toastMessage, setToastMessage] = useState("");
@@ -66,10 +54,6 @@ function AppContent() {
     localStorage.setItem("bikestore_catalog_products", JSON.stringify(products));
     localStorage.setItem("bikestore_catalog_version", "2");
   }, [products]);
-
-  useEffect(() => {
-    localStorage.setItem("bikestore_maintenance_bookings", JSON.stringify(bookings));
-  }, [bookings]);
 
   const showToast = (message: string, action?: { label: string; onClick: () => void }) => {
     setToastMessage(message);
@@ -133,21 +117,11 @@ function AppContent() {
     );
   };
 
-  // Registrar nueva reserva de mantenimiento
-  const handleBookingCreated = (newBooking: MaintenanceBooking) => {
-    setBookings((prev) => [newBooking, ...prev]);
-    showToast(`¡Cita agendada! Tu radicado es #${newBooking.id}`, {
-      label: "Consultar Avance",
-      onClick: () => setIsTrackingModalOpen(true),
-    });
-  };
-
   return (
     <MainLayout
       currentPage={currentPage}
       onNavigate={handleNavigate}
       onOpenSearch={() => setIsSearchOpen(true)}
-      onOpenTrackingModal={() => setIsTrackingModalOpen(true)}
     >
       {/* Vistas según la página activa */}
       {currentPage === "home" && (
@@ -155,11 +129,6 @@ function AppContent() {
           products={products}
           onAddToCart={(p) => handleAddToCart(p, 1)}
           onSelectProduct={handleSelectProduct}
-          onNavigate={handleNavigate}
-          onOpenMaintenanceModal={() => {
-            setServiceToBook(null);
-            setIsScheduleModalOpen(true);
-          }}
         />
       )}
 
@@ -167,18 +136,6 @@ function AppContent() {
         <ProductDetailPage
           product={selectedProduct}
           onAddToCart={handleAddToCart}
-          onNavigate={handleNavigate}
-        />
-      )}
-
-      {currentPage === "maintenance" && (
-        <MaintenancePage
-          services={maintenanceServices}
-          onOpenScheduleModal={(service) => {
-            setServiceToBook(service || null);
-            setIsScheduleModalOpen(true);
-          }}
-          onOpenTrackingModal={() => setIsTrackingModalOpen(true)}
           onNavigate={handleNavigate}
         />
       )}
@@ -210,7 +167,6 @@ function AppContent() {
       {currentPage === "admin" && (
         <AdminDashboardPage
           orders={orders}
-          bookings={bookings}
           products={products}
           onNavigate={handleNavigate}
           onSaveProduct={handleSaveProduct}
@@ -224,20 +180,6 @@ function AppContent() {
         isOpen={isSearchOpen}
         onClose={() => setIsSearchOpen(false)}
         onSelectProduct={handleSelectProduct}
-      />
-
-      <MaintenanceScheduleModal
-        isOpen={isScheduleModalOpen}
-        onClose={() => setIsScheduleModalOpen(false)}
-        selectedService={serviceToBook}
-        services={maintenanceServices}
-        onBookingSuccess={handleBookingCreated}
-      />
-
-      <MaintenanceTrackingModal
-        isOpen={isTrackingModalOpen}
-        onClose={() => setIsTrackingModalOpen(false)}
-        bookings={bookings}
       />
 
       {/* Alerta Toast Flotante */}

@@ -82,16 +82,6 @@ export const SuccessPage: React.FC<SuccessPageProps> = ({ order, onNavigate }) =
         >
           Volver a la Tienda
         </Button>
-
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={() => onNavigate("maintenance")}
-          icon={<Icon name="wrench" size={16} />}
-          iconPosition="left"
-        >
-          Conocer Taller de Mantenimiento
-        </Button>
       </div>
     </main>
   );

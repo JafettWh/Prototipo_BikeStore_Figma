@@ -113,7 +113,10 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4">
+        <form
+          onSubmit={handleSubmit}
+          className="p-6 space-y-4 [&_label]:inline-flex [&_label]:w-fit [&_label]:items-center [&_label]:justify-start [&_label]:gap-1 [&_label>span]:inline-flex [&_label>span]:w-fit [&_label>span]:shrink-0"
+        >
           {error && (
             <div className="p-3 bg-red-50 border border-red-200 text-red-700 text-xs rounded-sm">
               {error}

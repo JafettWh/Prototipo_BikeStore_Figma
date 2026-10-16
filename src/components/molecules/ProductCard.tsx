@@ -3,6 +3,7 @@ import { Product } from "../../types";
 import { formatCOP } from "../../utils/formatters";
 import Icon from "../atoms/Icon";
 import Badge from "../atoms/Badge";
+import Button from "../atoms/Button";
 
 interface ProductCardProps {
   product: Product;
@@ -67,20 +68,41 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           {product.name}
         </button>
 
-        <div className="mt-auto pt-3 border-t border-[#dedfd9] flex items-center justify-between">
-          <div>
-            <span className="text-xs font-bold text-[#11120f] block">
+        <div className="mt-auto pt-3 border-t border-[#dedfd9] flex flex-col gap-1">
+          <div className="min-w-0 w-full flex flex-col items-center">
+            <span
+              className="font-bold text-[#11120f] block"
+              style={{
+                fontSize: "16px",
+                marginLeft: "110px",
+                marginRight: "110px",
+                width: "fit-content",
+              }}
+            >
               {formatCOP(product.price)}
             </span>
-            <span className="text-[10px] text-[#6d6f69]">
+            <span
+              className="text-[#6d6f69] whitespace-nowrap"
+              style={{
+                fontSize: "12px",
+                marginLeft: "100px",
+                marginRight: "100px",
+                paddingTop: "5px",
+                paddingBottom: "5px",
+                width: "fit-content",
+              }}
+            >
               {isOutOfStock
                 ? "No disponible en bodega"
                 : `${product.stock} unidades en stock`}
             </span>
           </div>
 
-          <button
+          <Button
             type="button"
+            variant="primary"
+            size="sm"
+            fullWidth
             disabled={isOutOfStock}
             onClick={() => onAddToCart(product)}
             aria-label={
@@ -88,17 +110,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({
                 ? `${product.name} agotado`
                 : `Agregar ${product.name} al carrito`
             }
-            className={`
-              w-9 h-9 flex items-center justify-center border-0 transition-all duration-200 cursor-pointer
-              ${
-                isOutOfStock
-                  ? "bg-neutral-200 text-neutral-400 cursor-not-allowed"
-                  : "bg-[#ffd400] text-[#11120f] hover:bg-[#ffe048] hover:scale-105 active:scale-95 shadow-sm"
-              }
-            `}
+            className={`whitespace-nowrap ${
+              isOutOfStock
+                ? "bg-neutral-200 text-neutral-400 border-neutral-200 hover:bg-neutral-200 hover:translate-y-0"
+                : ""
+            }`}
           >
-            <Icon name="plus" size={17} />
-          </button>
+            {isOutOfStock ? "Sin stock" : "Agregar al carrito +"}
+          </Button>
         </div>
       </div>
     </article>

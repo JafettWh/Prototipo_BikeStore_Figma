@@ -90,13 +90,13 @@ export const AuthPage: React.FC<AuthPageProps> = ({ mode, onNavigate, returnAfte
   // VISTA DE RECUPERACIÓN DE CONTRASEÑA
   if (mode === "recovery") {
     return (
-      <main className="min-h-[80vh] bg-[#f8f8f5] py-16 px-6 text-left">
-        <div className="max-w-4xl mx-auto">
-          <div className="text-center max-w-xl mx-auto mb-10">
+      <main className="min-h-[80vh] bg-[#f8f8f5] px-6 py-12 sm:py-16 text-left">
+        <div className="w-full max-w-lg mx-auto flex flex-col gap-8">
+          <div className="text-center flex flex-col items-center gap-2">
             <span className="text-[11px] font-extrabold uppercase tracking-widest text-[#777a71] block">
               Seguridad de Cuenta
             </span>
-            <h1 className="font-['Barlow_Condensed'] font-extrabold uppercase text-4xl sm:text-5xl text-[#11120f] tracking-tight mt-1 mb-2">
+            <h1 className="font-['Barlow_Condensed'] font-extrabold uppercase text-4xl sm:text-5xl text-[#11120f] tracking-tight">
               Recuperación de Contraseña
             </h1>
             <p className="text-xs text-[#6d6f69]">
@@ -104,134 +104,150 @@ export const AuthPage: React.FC<AuthPageProps> = ({ mode, onNavigate, returnAfte
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Paso 1: Solicitar Código */}
-            <div
-              className={`bg-white p-6 border rounded-sm transition-all ${
-                recoveryStep === 1
-                  ? "border-[#ffd400] ring-2 ring-[#ffd400]/40 shadow-lg"
-                  : "border-[#dedfd9] opacity-75"
-              }`}
-            >
-              <span className="font-['Barlow_Condensed'] font-bold text-3xl text-[#b59700] block mb-1">
-                01
+          <div className="flex flex-col gap-3" aria-label={`Paso ${recoveryStep} de 3`}>
+            <div className="flex items-center justify-between gap-4">
+              <span className="text-[10px] font-extrabold uppercase tracking-widest text-[#11120f]">
+                Paso {recoveryStep} de 3
               </span>
-              <h3 className="font-['Barlow_Condensed'] font-bold text-xl uppercase text-[#11120f] mb-2">
-                Solicitar Código
-              </h3>
-              <p className="text-[11px] text-[#6d6f69] mb-4">
-                Ingresa tu correo para recibir una clave temporal de un solo uso.
-              </p>
-              <Input
-                label="Correo Registrado"
-                type="email"
-                required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                disabled={recoveryStep > 1}
-              />
-              <Button
-                variant={recoveryStep === 1 ? "primary" : "outline"}
-                size="sm"
-                fullWidth
-                className="mt-4"
-                disabled={recoveryStep > 1}
-                onClick={() => setRecoveryStep(2)}
-              >
-                Enviar Código
-              </Button>
+              <span className="text-[10px] font-bold uppercase tracking-wider text-[#777a71]">
+                {recoveryStep === 1 && "Solicitar código"}
+                {recoveryStep === 2 && "Confirmar código"}
+                {recoveryStep === 3 && "Nueva contraseña"}
+              </span>
             </div>
-
-            {/* Paso 2: Confirmar Código */}
             <div
-              className={`bg-white p-6 border rounded-sm transition-all ${
-                recoveryStep === 2
-                  ? "border-[#ffd400] ring-2 ring-[#ffd400]/40 shadow-lg"
-                  : "border-[#dedfd9] opacity-75"
-              }`}
+              className="grid grid-cols-3 gap-2"
+              role="progressbar"
+              aria-valuemin={1}
+              aria-valuemax={3}
+              aria-valuenow={recoveryStep}
             >
-              <span className="font-['Barlow_Condensed'] font-bold text-3xl text-[#b59700] block mb-1">
-                02
-              </span>
-              <h3 className="font-['Barlow_Condensed'] font-bold text-xl uppercase text-[#11120f] mb-2">
-                Confirmar Código
-              </h3>
-              <p className="text-[11px] text-[#6d6f69] mb-4">
-                Escribe el código temporal de seguridad recibido en tu bandeja de entrada.
-              </p>
-              <Input
-                label="Código de Seguridad"
-                required
-                value={recoveryCode}
-                onChange={(e) => setRecoveryCode(e.target.value)}
-                disabled={recoveryStep !== 2}
-              />
-              <Button
-                variant={recoveryStep === 2 ? "primary" : "outline"}
-                size="sm"
-                fullWidth
-                className="mt-4"
-                disabled={recoveryStep !== 2}
-                onClick={() => setRecoveryStep(3)}
-              >
-                Verificar Código
-              </Button>
-            </div>
-
-            {/* Paso 3: Nueva Contraseña */}
-            <div
-              className={`bg-white p-6 border rounded-sm transition-all ${
-                recoveryStep === 3
-                  ? "border-[#ffd400] ring-2 ring-[#ffd400]/40 shadow-lg"
-                  : "border-[#dedfd9] opacity-75"
-              }`}
-            >
-              <span className="font-['Barlow_Condensed'] font-bold text-3xl text-[#b59700] block mb-1">
-                03
-              </span>
-              <h3 className="font-['Barlow_Condensed'] font-bold text-xl uppercase text-[#11120f] mb-2">
-                Nueva Contraseña
-              </h3>
-              <p className="text-[11px] text-[#6d6f69] mb-4">
-                Define una contraseña de mínimo 8 caracteres cifrada con algoritmo de seguridad.
-              </p>
-              <Input
-                label="Nueva Contraseña"
-                type="password"
-                required
-                placeholder="Mínimo 8 caracteres"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-                disabled={recoveryStep !== 3}
-              />
-              <Button
-                variant={recoveryStep === 3 ? "primary" : "outline"}
-                size="sm"
-                fullWidth
-                className="mt-4"
-                disabled={recoveryStep !== 3}
-                onClick={() => {
-                  if (newPassword.length < 8) {
-                    alert("La nueva contraseña debe tener mínimo 8 caracteres.");
-                    return;
-                  }
-                  alert("¡Contraseña actualizada exitosamente! Redirigiendo a inicio de sesión...");
-                  onNavigate("login");
-                }}
-              >
-                Restablecer Acceso
-              </Button>
+              {[1, 2, 3].map((step) => (
+                <span
+                  key={step}
+                  className={`h-1.5 rounded-sm transition-colors ${
+                    step <= recoveryStep ? "bg-[#ffd400]" : "bg-[#dedfd9]"
+                  }`}
+                />
+              ))}
             </div>
           </div>
 
-          <div className="text-center mt-10">
-            <button
-              type="button"
-              onClick={() => onNavigate("login")}
-              className="text-xs font-bold uppercase underline text-[#11120f] hover:text-[#b59700] bg-transparent border-0 cursor-pointer"
-            >
-              ← Volver al Inicio de Sesión
-            </button>
+          <div className="bg-white border border-[#ffd400] ring-2 ring-[#ffd400]/40 shadow-lg rounded-sm p-6 sm:p-8">
+            {recoveryStep === 1 && (
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-2">
+                  <span className="font-['Barlow_Condensed'] font-bold text-3xl text-[#b59700] block">
+                    01
+                  </span>
+                  <h2 className="font-['Barlow_Condensed'] font-bold text-2xl uppercase text-[#11120f]">
+                    Solicitar Código
+                  </h2>
+                  <p className="text-xs text-[#6d6f69]">
+                    Ingresa tu correo para recibir una clave temporal de un solo uso.
+                  </p>
+                </div>
+                <Input
+                  label="Correo Registrado"
+                  type="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  onClick={() => setRecoveryStep(2)}
+                >
+                  Enviar Código
+                </Button>
+              </div>
+            )}
+
+            {recoveryStep === 2 && (
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-2">
+                  <span className="font-['Barlow_Condensed'] font-bold text-3xl text-[#b59700] block">
+                    02
+                  </span>
+                  <h2 className="font-['Barlow_Condensed'] font-bold text-2xl uppercase text-[#11120f]">
+                    Confirmar Código
+                  </h2>
+                  <p className="text-xs text-[#6d6f69]">
+                    Escribe el código temporal de seguridad recibido en tu bandeja de entrada.
+                  </p>
+                </div>
+                <Input
+                  label="Código de Seguridad"
+                  required
+                  value={recoveryCode}
+                  onChange={(e) => setRecoveryCode(e.target.value)}
+                />
+                <div className="flex flex-col gap-3">
+                  <Button
+                    type="button"
+                    variant="primary"
+                    size="md"
+                    fullWidth
+                    onClick={() => setRecoveryStep(3)}
+                  >
+                    Verificar Código
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="md"
+                    fullWidth
+                    className="justify-start"
+                    onClick={() => setRecoveryCode("8473-9204")}
+                  >
+                    Reenviar código
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {recoveryStep === 3 && (
+              <div className="flex flex-col gap-5">
+                <div className="flex flex-col gap-2">
+                  <span className="font-['Barlow_Condensed'] font-bold text-3xl text-[#b59700] block">
+                    03
+                  </span>
+                  <h2 className="font-['Barlow_Condensed'] font-bold text-2xl uppercase text-[#11120f]">
+                    Nueva Contraseña
+                  </h2>
+                  <p className="text-xs text-[#6d6f69]">
+                    Define una contraseña de mínimo 8 caracteres cifrada con algoritmo de seguridad.
+                  </p>
+                </div>
+                <Input
+                  label="Nueva Contraseña"
+                  type="password"
+                  required
+                  placeholder="Mínimo 8 caracteres"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                />
+                <Button
+                  type="button"
+                  variant="primary"
+                  size="md"
+                  fullWidth
+                  onClick={() => {
+                    if (newPassword.length < 8) {
+                      alert("La nueva contraseña debe tener mínimo 8 caracteres.");
+                      return;
+                    }
+                    alert("¡Contraseña actualizada exitosamente! Redirigiendo a inicio de sesión...");
+                    onNavigate("login");
+                  }}
+                >
+                  Restablecer Acceso
+                </Button>
+              </div>
+            )}
           </div>
         </div>
       </main>

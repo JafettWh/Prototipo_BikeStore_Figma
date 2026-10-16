@@ -1,15 +1,12 @@
 import React from "react";
-import { Page } from "../../types";
 import Icon from "../atoms/Icon";
 import Button from "../atoms/Button";
 
 interface HeroBannerProps {
-  onNavigate: (page: Page) => void;
   onExploreCatalog: () => void;
 }
 
 export const HeroBanner: React.FC<HeroBannerProps> = ({
-  onNavigate,
   onExploreCatalog,
 }) => {
   return (
@@ -40,7 +37,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           </h1>
 
           <p className="text-sm sm:text-base text-neutral-300 leading-relaxed mb-8 max-w-xl">
-            Ingeniería de montaña de fibra de carbono, aerodinámica pura de carretera y tecnología eléctrica para ciclistas que nunca se detienen. Respaldado por mecánicos certificados.
+            Ingeniería de montaña de fibra de carbono, aerodinámica pura de carretera y tecnología eléctrica para ciclistas que nunca se detienen.
           </p>
 
           <div className="flex flex-wrap items-center gap-4">
@@ -51,16 +48,6 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
               icon={<Icon name="arrow" size={17} />}
             >
               Explorar Catálogo
-            </Button>
-
-            <Button
-              variant="secondary"
-              size="lg"
-              onClick={() => onNavigate("maintenance")}
-              icon={<Icon name="wrench" size={17} />}
-              iconPosition="left"
-            >
-              Agendar Taller Pro
             </Button>
           </div>
         </div>
@@ -82,14 +69,6 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
           </span>
           <span className="text-[10px] uppercase text-[#a2a39e] tracking-wider">
             Envío Nacional
-          </span>
-        </div>
-        <div className="bg-[#0f100d]/90 backdrop-blur-md border-t-2 border-[#ffd400] px-6 py-4">
-          <span className="font-['Barlow_Condensed'] text-2xl font-bold text-white block">
-            Taller Oficial
-          </span>
-          <span className="text-[10px] uppercase text-[#a2a39e] tracking-wider">
-            Palmira & Cali
           </span>
         </div>
       </div>
