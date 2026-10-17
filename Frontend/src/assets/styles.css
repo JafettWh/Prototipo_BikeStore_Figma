@@ -1709,3 +1709,22 @@ footer{background:#141512;color:#a2a39e;padding:65px max(24px,calc((100vw - 1400
 .cart-button-style-1 {
   font-size: 14px !important;
 }
+
+/* =====================================================================
+   ETIQUETAS DE FORMULARIO
+   La regla global label { flex-direction: column } del CSS de arriba apilaba
+   el texto y el asterisco (*) de campo obligatorio. Aquí se dejan en una sola
+   línea: "NOMBRE DEL PRODUCTO *".
+   ===================================================================== */
+.input-label-1,
+.product-form-modal-label-1,
+.user-form-modal-label-1,
+.product-deactivate-modal-label-1,
+.checkout-label-1,
+.checkout-label-2 {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 4px;
+}
